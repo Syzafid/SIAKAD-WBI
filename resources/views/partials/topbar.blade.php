@@ -42,6 +42,18 @@
                                 $title = 'Kehadiran Mahasiswa';
                             } elseif (request()->routeIs('profilMahasiswa.*') || request()->is('profilMahasiswa*')) {
                                 $title = 'Profil Mahasiswa';
+                            } elseif (request()->routeIs('kuliahMahasiswa.*') || request()->is('kuliahMahasiswa*')) {
+                                $title = 'Data Kuliah Mahasiswa';
+                            } elseif (request()->routeIs('nilaiTransfer.*') || request()->is('nilaiTransfer*')) {
+                                $title = 'Nilai Transfer';
+                            } elseif (request()->routeIs('2023-2024Ganjil.*') || request()->is('2023-2024Ganjil*')) {
+                                $title = 'Arsip Nilai Mahasiswa';
+                            } elseif (request()->routeIs('2023-2024Genap.*') || request()->is('2023-2024Genap*')) {
+                                $title = 'Arsip Nilai Mahasiswa';
+                            }  elseif (request()->routeIs('2024-2025Ganjil.*') || request()->is('2024-2025Ganjil*')) {
+                                $title = 'Arsip Nilai Mahasiswa';
+                            } elseif (request()->routeIs('2024-2025Genap.*') || request()->is('2024-2025Genap*')) {
+                                $title = 'Arsip Nilai Mahasiswa';
                             }
                         @endphp
                         <h2 class="text-sm font-semibold text-gray-700">{{ $title }}</h2>
