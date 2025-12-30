@@ -76,3 +76,8 @@ Route::get('2024-2025Genap', function () {
     return view(('2024-2025Genap.index'));
 })->name('2024-2025Genap.index');
 
+// Pengajuan Judul
+Route::get('pengajuanJudul', function (){
+    return view(('pengajuanJudul.index'));
+})->name('pengajuanJudul.index');
+

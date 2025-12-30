@@ -54,6 +54,8 @@
                                 $title = 'Arsip Nilai Mahasiswa';
                             } elseif (request()->routeIs('2024-2025Genap.*') || request()->is('2024-2025Genap*')) {
                                 $title = 'Arsip Nilai Mahasiswa';
+                            } elseif (request()->routeIs('pengajuanJudul.*') || request()->is('pengajuanJudul*')) {
+                                $title = 'Pengajuan Judul';
                             }
                         @endphp
                         <h2 class="text-sm font-semibold text-gray-700">{{ $title }}</h2>

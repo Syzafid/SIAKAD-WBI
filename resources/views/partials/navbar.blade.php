@@ -79,7 +79,7 @@ class="block px-4 py-2.5 text-sm transition
     <div data-accordion-content class="hidden">
         <a href="{{ route('pengajuanJudul.index')}}"
             class="block px-4 py-2.5 text-sm transition
-            {{ request()->routeIs('kuliahMahasiswa.*')
+            {{ request()->routeIs('pengajuanJudul.*')
             ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
             : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
             Pengajuan Judul
