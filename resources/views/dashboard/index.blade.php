@@ -24,7 +24,7 @@
     <div class="relative z-10 flex items-center justify-between">
         <div>
             <h2 class="text-3xl font-bold tracking-tight mb-2">Selamat Datang Kembali!</h2>
-            <p class="text-lg text-green-50 font-medium">Budi Doremi</p>
+            <p class="text-lg text-green-50 font-medium">{{ $mahasiswa->nama ?? $user->name }}</p>
             <p class="text-green-100/90 font-light">Teknologi Rekayasa Perangkat Lunak</p>
         </div>
         

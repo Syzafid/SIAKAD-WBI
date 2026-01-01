@@ -11,7 +11,7 @@
     </button>
 
             <div data-accordion-button class="hidden">
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('dashboard.index') }}"
    class="block px-4 py-2.5 text-sm transition
    {{ request()->routeIs('dashboard')
         ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
