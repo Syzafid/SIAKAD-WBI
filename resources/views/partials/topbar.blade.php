@@ -18,7 +18,7 @@
             <div class="flex items-center justify-between">
                 
                 <div class="flex items-center gap-6">
-                    <a href="{{ route('dashboard') }}" class="block">
+                    <a href="{{ route('dashboard.index') }}" class="block">
                         <img src="{{ asset('img/logo-wbi2.png') }}"
                              alt="Logo Universitas WBI"
                              class="h-12">
