@@ -31,4 +31,17 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(Dosen::class, 'dosen_wali_id');
     }
+
+    public function krs()
+    {
+        return $this->hasMany(Krs::class, 'mahasiswa_id');
+    }
+
+    public function activeKrs()
+    {
+        return $this->hasOne(Krs::class, 'mahasiswa_id')
+            ->whereHas('semesterAjaran', function($q) {
+                $q->where('is_active', true);
+            });
+    }
 }

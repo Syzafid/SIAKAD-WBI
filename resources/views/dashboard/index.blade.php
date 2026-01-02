@@ -24,8 +24,8 @@
     <div class="relative z-10 flex items-center justify-between">
         <div>
             <h2 class="text-3xl font-bold tracking-tight mb-2">Selamat Datang Kembali!</h2>
-            <p class="text-lg text-green-50 font-medium">{{ $mahasiswa->nama ?? $user->name }}</p>
-            <p class="text-green-100/90 font-light">Teknologi Rekayasa Perangkat Lunak</p>
+            <p class="text-lg text-green-50 font-medium">{{ auth()->user()->name }}</p>
+            <p class="text-green-100/90 font-light">{{ auth()->user()->mahasiswa->prodi->nama_prodi ?? 'Teknologi Rekayasa Perangkat Lunak' }}</p>
         </div>
         
         {{-- IPK Box --}}
@@ -45,7 +45,9 @@
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-sm font-bold text-[#4B6B99] mb-1">SKS Lulus</p>
-                <h3 class="text-4xl font-bold text-[#2B6CB0]">82</h3>
+                <h3 class="text-4xl font-bold text-[#2B6CB0]">
+                    {{ auth()->user()->mahasiswa->krs->where('status', 'final')->sum('total_sks') }}
+                </h3>
                 <p class="mt-2 text-xs text-[#6B8CB3]">81.18% dari total</p>
             </div>
             <div class="rounded-lg bg-[#CDE0FD] p-2 text-[#2B6CB0]">
@@ -59,11 +61,13 @@
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-sm font-bold text-[#00838F] mb-1">Total SKS</p>
-                <h3 class="text-4xl font-bold text-[#00ACC1]">82</h3>
+                <h3 class="text-4xl font-bold text-[#00ACC1]">
+                    {{ auth()->user()->mahasiswa->activeKrs->total_sks ?? 0 }}
+                </h3>
                 <p class="mt-2 text-xs text-[#4DD0E1]">Tidak Lulus: 0</p>
             </div>
             <div class="rounded-lg bg-[#B2EBF2] p-2 text-[#00838F]">
-                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
         </div>
     </div>
@@ -73,8 +77,13 @@
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-sm font-bold text-[#8E24AA] mb-1">Semester Aktif</p>
-                <h3 class="text-4xl font-bold text-[#9C27B0]">5</h3>
-                <p class="mt-2 text-xs text-[#BA68C8]">2025/2026 Ganjil</p>
+                <h3 class="text-4xl font-bold text-[#9C27B0]">
+                    {{ auth()->user()->mahasiswa->semester_sekarang ?? '5' }}
+                </h3>
+                <p class="mt-2 text-xs text-[#BA68C8]">
+                    {{ auth()->user()->mahasiswa->activeKrs->semesterAjaran->tahun_ajaran ?? '2025/2026' }}
+                    {{ ucfirst(auth()->user()->mahasiswa->activeKrs->semesterAjaran->semester ?? 'Ganjil') }}
+                </p>
             </div>
             <div class="rounded-lg bg-[#E1BEE7] p-2 text-[#8E24AA]">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -87,7 +96,9 @@
         <div class="flex items-start justify-between">
             <div class="flex-1">
                 <p class="text-sm font-bold text-[#E65100] mb-1">Dosen Wali</p>
-                <h3 class="text-3xl font-bold text-[#FB8C00] truncate" title="Rahmat">Rahmat</h3>
+                <h3 class="text-3xl font-bold text-[#FB8C00] truncate" title="{{ auth()->user()->mahasiswa?->dosenWali?->nama ?? 'Belum ada' }}">
+                    {{ auth()->user()->mahasiswa?->dosenWali?->nama ?? 'Belum ada' }}
+                </h3>
                 <p class="mt-2 text-xs text-[#FFB74D]">2025/2026 Ganjil</p>
             </div>
             <div class="rounded-lg bg-[#FFE0B2] p-2 text-[#E65100] flex-shrink-0 ml-2">

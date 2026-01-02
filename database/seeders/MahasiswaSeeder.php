@@ -21,47 +21,43 @@ class MahasiswaSeeder extends Seeder
             }
 
 
-            // 2. PRODI
-            $prodiId = DB::table('prodi')->insertGetId([
-                'kode_prodi' => 'TI',
-                'nama_prodi' => 'Teknik Informatika',
-                'jenjang' => 'S1',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // 2. PRODI (Use existing from ProdiSeeder or create if missing)
+            $prodiId = DB::table('prodi')->where('kode_prodi', 'TRPL')->value('prodi_id');
 
-            // 3. WILAYAH (kelurahan dummy)
-            $wilayahProvinsi = DB::table('wilayah')->insertGetId([
-                'nama' => 'Jawa Barat',
-                'tipe' => 'provinsi',
-                'parent_id' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            if (!$prodiId) {
+                $prodiId = DB::table('prodi')->insertGetId([
+                    'kode_prodi' => 'TRPL',
+                    'nama_prodi' => 'Teknik Informatika',
+                    'jenjang' => 'D4',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
-            $wilayahKabupaten = DB::table('wilayah')->insertGetId([
-                'nama' => 'Bandung',
-                'tipe' => 'kabupaten',
-                'parent_id' => $wilayahProvinsi,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // 3. WILAYAH
+            $wilayahProvinsi = DB::table('wilayah')->updateOrInsert(
+                ['nama' => 'Jawa Barat', 'tipe' => 'provinsi'],
+                ['parent_id' => null, 'created_at' => now(), 'updated_at' => now()]
+            );
+            $provinsiId = DB::table('wilayah')->where('nama', 'Jawa Barat')->value('wilayah_id');
 
-            $wilayahKecamatan = DB::table('wilayah')->insertGetId([
-                'nama' => 'Coblong',
-                'tipe' => 'kecamatan',
-                'parent_id' => $wilayahKabupaten,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $wilayahKabupaten = DB::table('wilayah')->updateOrInsert(
+                ['nama' => 'Bandung', 'tipe' => 'kabupaten'],
+                ['parent_id' => $provinsiId, 'created_at' => now(), 'updated_at' => now()]
+            );
+            $kabupatenId = DB::table('wilayah')->where('nama', 'Bandung')->value('wilayah_id');
 
-            $wilayahKelurahan = DB::table('wilayah')->insertGetId([
-                'nama' => 'Dago',
-                'tipe' => 'kelurahan',
-                'parent_id' => $wilayahKecamatan,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $wilayahKecamatan = DB::table('wilayah')->updateOrInsert(
+                ['nama' => 'Coblong', 'tipe' => 'kecamatan'],
+                ['parent_id' => $kabupatenId, 'created_at' => now(), 'updated_at' => now()]
+            );
+            $kecamatanId = DB::table('wilayah')->where('nama', 'Coblong')->value('wilayah_id');
+
+            $wilayahKelurahan = DB::table('wilayah')->updateOrInsert(
+                ['nama' => 'Dago', 'tipe' => 'kelurahan'],
+                ['parent_id' => $kecamatanId, 'created_at' => now(), 'updated_at' => now()]
+            );
+            $kelurahanId = DB::table('wilayah')->where('nama', 'Dago')->value('wilayah_id');
 
             // 4. DOSEN (wali)
             $dosenUserId = DB::table('users')
@@ -72,32 +68,36 @@ class MahasiswaSeeder extends Seeder
                 throw new \Exception('User dosen belum ada.');
             }
 
-
-            $dosenId = DB::table('dosen')->insertGetId([
-                'user_id' => $dosenUserId,
-                'nip' => '1987654321',
-                'nama' => 'Dr. Dosen Wali',
-                'prodi_id' => $prodiId,
-                'is_wali' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('dosen')->updateOrInsert(
+                ['user_id' => $dosenUserId],
+                [
+                    'nip' => '1987654321',
+                    'nama' => 'Dr. Dosen Wali',
+                    'prodi_id' => $prodiId,
+                    'is_wali' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+            $dosenId = DB::table('dosen')->where('user_id', $dosenUserId)->value('dosen_id');
 
             // 5. MAHASISWA
-            DB::table('mahasiswa')->insert([
-                'user_id' => $userId,
-                'npm' => '2023010001',
-                'nama' => 'Rajif Fandi',
-                'angkatan' => 2023,
-                'semester_sekarang' => 3,
-                'prodi_id' => $prodiId,
-                'wilayah_id' => $wilayahKelurahan,
-                'dosen_wali_id' => $dosenId,
-                'ukt_nominal' => 4500000,
-                'status_beasiswa' => '0%',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('mahasiswa')->updateOrInsert(
+                ['user_id' => $userId],
+                [
+                    'npm' => '2023010001',
+                    'nama' => 'Rajif Fandi',
+                    'angkatan' => 2023,
+                    'semester_sekarang' => 3,
+                    'prodi_id' => $prodiId,
+                    'wilayah_id' => $kelurahanId,
+                    'dosen_wali_id' => $dosenId,
+                    'ukt_nominal' => 4500000,
+                    'status_beasiswa' => '0%',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         });
     }
 }

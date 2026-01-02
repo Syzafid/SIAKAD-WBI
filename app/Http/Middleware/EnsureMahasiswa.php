@@ -3,23 +3,20 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Mahasiswa;
+use App\Models\User;
 
 class EnsureMahasiswa
 {
-    public function handle(Request $request, Closure $next)
+    public function handle($request, Closure $next)
     {
-        if (!Auth::check()) {
+        $user = Auth::user();
+
+        if (!$user) {
             abort(401, 'Belum login');
         }
 
-        $userId = Auth::id();
-
-        $isMahasiswa = Mahasiswa::where('user_id', $userId)->exists();
-
-        if (!$isMahasiswa) {
+        if ($user->role !== 'mahasiswa') {
             abort(403, 'Akses khusus mahasiswa');
         }
 
