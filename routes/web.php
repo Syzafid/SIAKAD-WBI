@@ -1,21 +1,25 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Mahasiswa\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 
-Route::get('/', [LoginController::class, 'showLoginForm']);
-
+Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'role:mahasiswa'])
-    ->prefix('mahasiswa')
-    ->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard.index');
-    });
+Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard.index');
+    })->name('dashboard.index');
+});
+
+Route::middleware(['auth', 'role:dosen'])->group(function () {
+    Route::get('/dosen/dashboard', function () {
+        return view('dashboard');
+    })->name('dosen.dashboard');
+});
+
+
 
 
 
