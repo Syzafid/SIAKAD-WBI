@@ -38,20 +38,21 @@ class KrsSeeder extends Seeder
         $trplProdi = Prodi::where('kode_prodi', 'TRPL')->first();
 
         // 2. Mata Kuliah/Kelas
+        // 2. Kelas pointing to Matakuliah
         $kelasData = [
-            ['kode_kelas' => 'TRPL101', 'nama_matakuliah' => 'Pemrograman Dasar', 'sks' => 3],
-            ['kode_kelas' => 'TRPL102', 'nama_matakuliah' => 'Basis Data', 'sks' => 3],
-            ['kode_kelas' => 'TRPL103', 'nama_matakuliah' => 'Matematika Diskrit', 'sks' => 2],
-            ['kode_kelas' => 'TRPL104', 'nama_matakuliah' => 'Struktur Data', 'sks' => 3],
-            ['kode_kelas' => 'TRPL105', 'nama_matakuliah' => 'Jaringan Komputer', 'sks' => 3],
+            ['kode_kelas' => 'TRPL101-A', 'kode_mk' => 'TRPL101'],
+            ['kode_kelas' => 'TRPL102-A', 'kode_mk' => 'TRPL102'],
+            ['kode_kelas' => 'TRPL103-A', 'kode_mk' => 'TRPL103'],
+            ['kode_kelas' => 'TRPL104-A', 'kode_mk' => 'TRPL104'],
+            ['kode_kelas' => 'TRPL105-A', 'kode_mk' => 'TRPL105'],
         ];
 
         foreach ($kelasData as $kd) {
+            $mk = \App\Models\Matakuliah::where('kode_mk', $kd['kode_mk'])->first();
             Kelas::updateOrCreate(
-                ['kode_kelas' => $kd['kode_kelas']],
+                ['kode_kelas' => $kd['kode_kelas'] . '-' . $activeSemester->semester_ajaran_id],
                 [
-                    'nama_matakuliah' => $kd['nama_matakuliah'],
-                    'sks' => $kd['sks'],
+                    'matakuliah_id' => $mk->matakuliah_id,
                     'prodi_id' => $trplProdi->prodi_id,
                     'semester_ajaran_id' => $activeSemester->semester_ajaran_id
                 ]

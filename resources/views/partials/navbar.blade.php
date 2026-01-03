@@ -118,34 +118,36 @@ class="block px-4 py-2.5 text-sm transition
             : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
             Nilai Transfer
         </a>
-        <a href="{{ route('2023-2024Ganjil.index')}}"
+        <a href="{{ route('arsip-nilai.index') }}"
             class="block px-4 py-2.5 text-sm transition
-            {{ request()->routeIs('2023-2024Ganjil.*')
+            {{ request()->routeIs('arsip-nilai.*')
             ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
             : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
-            2023/2024 Ganjil
+            Arsip Nilai (Semua)
         </a>
-        <a href="{{ route('2023-2024Genap.index')}}"
-            class="block px-4 py-2.5 text-sm transition
-            {{ request()->routeIs('2023-2024Genap.*')
-            ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
-            : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
-            2023/2024 Genap
-        </a>
-        <a href="{{ route('2024-2025Ganjil.index')}}"
-            class="block px-4 py-2.5 text-sm transition
-            {{ request()->routeIs('2024-2025Ganjil.*')
-            ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
-            : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
-            2024/2025 Ganjil
-        </a>
-        <a href="{{ route('2024-2025Genap.index')}}"
-            class="block px-4 py-2.5 text-sm transition
-            {{ request()->routeIs('2024-2025Genap.*')
-            ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
-            : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
-            2024/2025 Genap
-        </a>
+        
+        @php
+            $arsipNavbar = [];
+            if (Auth::check() && Auth::user()->mahasiswa) {
+                $arsipNavbar = \App\Models\Khs::with('semesterAjaran')
+                    ->where('mahasiswa_id', Auth::user()->mahasiswa->mahasiswa_id)
+                    ->join('semester_ajaran', 'khs.semester_ajaran_id', '=', 'semester_ajaran.semester_ajaran_id')
+                    ->select('khs.*')
+                    ->orderBy('semester_ajaran.tahun_ajaran', 'desc')
+                    ->orderBy('semester_ajaran.semester', 'desc')
+                    ->get();
+            }
+        @endphp
+
+        @foreach($arsipNavbar as $arsip)
+            <a href="{{ route('arsip-nilai.show', $arsip->khs_id) }}"
+                class="block px-4 py-2.5 text-sm transition
+                {{ request()->is('arsip-nilai/' . $arsip->khs_id)
+                ? 'bg-[#3da76e]/20 border-l-4 border-green-400 font-semibold text-white'
+                : 'pl-5 font-medium text-green-100/70 hover:text-white'}}">
+                {{ $arsip->semesterAjaran->tahun_ajaran }} {{ ucfirst($arsip->semesterAjaran->semester) }}
+            </a>
+        @endforeach
         
     </div>
 

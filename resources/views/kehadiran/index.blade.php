@@ -15,7 +15,7 @@
                     <span class="text-sm font-bold text-gray-700 leading-tight">Total <br> Mata Kuliah</span>
                 </div>
                 <div class="mt-6 text-center">
-                    <h3 class="text-5xl font-bold text-black">8</h3>
+                    <h3 class="text-5xl font-bold text-black">{{ $stats['total_mk'] }}</h3>
                 </div>
             </div>
             <div class="mt-4 text-xs font-medium text-gray-500">
@@ -33,7 +33,7 @@
                     <span class="text-sm font-bold text-gray-700 leading-tight">Rata-rata <br> Kehadiran</span>
                 </div>
                 <div class="mt-6 text-center">
-                    <h3 class="text-5xl font-bold text-black">11.11%</h3>
+                    <h3 class="text-5xl font-bold text-black">{{ $stats['avg_attendance'] }}%</h3>
                 </div>
             </div>
             <div class="mt-4 text-xs font-medium text-gray-500">
@@ -46,12 +46,12 @@
             <div>
                 <div class="flex items-center gap-3">
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path></svg>
                     </div>
                     <span class="text-sm font-bold text-gray-700 leading-tight">MK Dengan <br> Data</span>
                 </div>
                 <div class="mt-6 text-center">
-                    <h3 class="text-5xl font-bold text-black">1</h3>
+                    <h3 class="text-5xl font-bold text-black">{{ $stats['mk_with_data'] }}</h3>
                 </div>
             </div>
             <div class="mt-4 text-xs font-medium text-gray-500">
@@ -69,7 +69,7 @@
                     <span class="text-sm font-bold text-gray-700 leading-tight">MK Kritis</span>
                 </div>
                 <div class="mt-6 text-center">
-                    <h3 class="text-5xl font-bold text-black">0</h3>
+                    <h3 class="text-5xl font-bold text-black">{{ $stats['mk_critical'] }}</h3>
                 </div>
             </div>
             <div class="mt-4 text-xs font-medium text-gray-500">
@@ -113,70 +113,27 @@
         </div>
     </div>
 
-    {{-- Course List --}}
-    @php
-        $courses = [
-            [
-                'id' => 1,
-                'name' => 'Agile Development',
-                'meetings_count' => '15 pertemuan tercatat',
-                'percentage' => 100,
-                'status' => '100%',
-                'data' => array_fill(0, 15, 'H')
-            ],
-            [
-                'id' => 2,
-                'name' => 'Tata Kelola IT',
-                'meetings_count' => '0 pertemuan tercatat',
-                'percentage' => 0,
-                'status' => '0%',
-                'data' => array_fill(0, 15, '-')
-            ],
-            [
-                'id' => 3,
-                'name' => 'Pendidikan Kewarganegaraan',
-                'meetings_count' => '0 pertemuan tercatat',
-                'percentage' => 0,
-                'status' => '0%',
-                'data' => array_fill(0, 15, '-')
-            ],
-            [
-                'id' => 4,
-                'name' => 'Kecerdasan Buatan',
-                'meetings_count' => '0 pertemuan tercatat',
-                'percentage' => 0,
-                'status' => '0%',
-                'data' => array_fill(0, 15, '-')
-            ],
-            [
-                'id' => 5,
-                'name' => 'Pemrograman Web Lanjut',
-                'meetings_count' => '0 pertemuan tercatat',
-                'percentage' => 0,
-                'status' => '0%',
-                'data' => array_fill(0, 15, '-')
-            ]
-        ];
-    @endphp
-
     <div class="space-y-4">
-        @foreach($courses as $course)
-        <div class="rounded-2xl bg-white shadow-sm overflow-hidden border-l-4 border-green-700">
+        @forelse($courseAttendance as $index => $course)
+        <div class="rounded-2xl bg-white shadow-sm overflow-hidden border-l-4 {{ $course['percentage'] >= 75 ? 'border-green-700' : 'border-red-600' }}">
             {{-- Header --}}
-            <div class="bg-[#D4F0E1] p-4 border-b border-green-100">
+            <div class="{{ $course['percentage'] >= 75 ? 'bg-[#D4F0E1]' : 'bg-red-50' }} p-4 border-b {{ $course['percentage'] >= 75 ? 'border-green-100' : 'border-red-100' }}">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-700 text-sm font-bold text-white shadow-sm">
-                            {{ $course['id'] }}
+                        <div class="flex h-8 w-8 items-center justify-center rounded-full {{ $course['percentage'] >= 75 ? 'bg-green-700' : 'bg-red-600' }} text-sm font-bold text-white shadow-sm">
+                            {{ $index + 1 }}
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900">{{ $course['name'] }}</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-gray-500">{{ $course['code'] }}</span>
+                                <h3 class="text-base font-bold text-gray-900">{{ $course['name'] }}</h3>
+                            </div>
                             <p class="text-xs text-gray-500">{{ $course['meetings_count'] }}</p>
                         </div>
                     </div>
                     <div>
                         <div class="rounded-lg px-3 py-1 text-center 
-                            {{ $course['percentage'] == 100 ? 'bg-gradient-to-r from-[#1F653F] via-[#2F8054] to-[#47AF76] text-white' : 'bg-gradient-to-r from-[#DC0000] via-[#FF1212] to-[#FFB433] text-white' }}">
+                            {{ $course['percentage'] >= 75 ? 'bg-gradient-to-r from-[#1F653F] via-[#2F8054] to-[#47AF76]' : 'bg-gradient-to-r from-[#DC0000] via-[#FF1212] to-[#FFB433]' }} text-white">
                             <div class="text-sm font-bold text-white">{{ $course['status'] }}</div>
                             <div class="text-[10px] text-white/90">Kehadiran</div>
                         </div>
@@ -188,18 +145,29 @@
             <div class="p-4">
                 <div class="grid grid-cols-15 gap-1 sm:gap-2">
                     @for($i = 1; $i <= 15; $i++)
+                        @php 
+                            $status = $course['data'][$i-1];
+                            $bgColor = 'bg-gray-200';
+                            if($status === 'H') $bgColor = 'bg-[#00B050]';
+                            elseif($status === 'I') $bgColor = 'bg-[#FFC000]';
+                            elseif($status === 'S') $bgColor = 'bg-[#0055FF]';
+                            elseif($status === 'A') $bgColor = 'bg-[#FF0000]';
+                        @endphp
                         <div class="text-center">
                             <div class="mb-1 text-[10px] font-bold text-gray-600">P{{ $i }}</div>
-                            <div class="flex h-8 w-full items-center justify-center rounded text-xs font-bold text-white
-                                {{ ($course['data'][$i-1] ?? '-') === 'H' ? 'bg-[#00B050]' : 'bg-gray-400' }}">
-                                {{ $course['data'][$i-1] ?? '-' }}
+                            <div class="flex h-8 w-full items-center justify-center rounded text-xs font-bold text-white {{ $bgColor }} shadow-sm">
+                                {{ $status }}
                             </div>
                         </div>
                     @endfor
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+            <p class="text-gray-500 italic">Belum ada mata kuliah yang terdaftar di KRS semester ini.</p>
+        </div>
+        @endforelse
     </div>
 
 </div>

@@ -3,7 +3,6 @@
 @section('content')
 
 {{-- Welcome Card --}}
-{{-- Based on image: Deep green gradient, dots pattern, white text, IPK box on right --}}
 <div class="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-[#2E7D55] to-[#1F653F] p-8 text-white shadow-lg">
     {{-- Decorative Dots/Pattern (CSS Simulated) --}}
     <div class="absolute left-0 top-0 p-4 opacity-20">
@@ -24,31 +23,30 @@
     <div class="relative z-10 flex items-center justify-between">
         <div>
             <h2 class="text-3xl font-bold tracking-tight mb-2">Selamat Datang Kembali!</h2>
-            <p class="text-lg text-green-50 font-medium">{{ auth()->user()->name }}</p>
-            <p class="text-green-100/90 font-light">{{ auth()->user()->mahasiswa->prodi->nama_prodi ?? 'Teknologi Rekayasa Perangkat Lunak' }}</p>
+            <p class="text-lg text-green-50 font-medium">{{ $mahasiswa->nama }}</p>
+            <p class="text-green-100/90 font-light">{{ $mahasiswa->prodi->nama_prodi ?? 'Teknologi Rekayasa Perangkat Lunak' }}</p>
         </div>
         
         {{-- IPK Box --}}
         <div class="rounded-2xl bg-white/10 p-4 text-center backdrop-blur-sm border border-white/20 min-w-[120px]">
-            <div class="text-5xl font-bold tracking-tighter">3.0</div>
+            <div class="text-5xl font-bold tracking-tighter">{{ number_format($ipk, 2) }}</div>
             <div class="text-xs font-medium uppercase tracking-wider text-green-100 mt-1">IPK Kumulatif</div>
         </div>
     </div>
 </div>
 
 {{-- Stats Row --}}
-{{-- Colors based on image: Blue, Cyan, Purple, Orange (Pastel backgrounds) --}}
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
     
-    {{-- SKS Lulus (Blue) --}}
+    {{-- SKS Lulus --}}
     <div class="relative overflow-hidden rounded-2xl bg-[#E6F0FF] p-6 transition-all hover:-translate-y-1 hover:shadow-md border border-[#D0E1FD]">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-sm font-bold text-[#4B6B99] mb-1">SKS Lulus</p>
                 <h3 class="text-4xl font-bold text-[#2B6CB0]">
-                    {{ auth()->user()->mahasiswa->krs->where('status', 'final')->sum('total_sks') }}
+                    {{ $sksLulus }}
                 </h3>
-                <p class="mt-2 text-xs text-[#6B8CB3]">81.18% dari total</p>
+                <p class="mt-2 text-xs text-[#6B8CB3]">Total Kredit Berhasil</p>
             </div>
             <div class="rounded-lg bg-[#CDE0FD] p-2 text-[#2B6CB0]">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -56,15 +54,15 @@
         </div>
     </div>
 
-    {{-- Total SKS (Cyan) --}}
+    {{-- SKS Berjalan (Cyan) --}}
     <div class="relative overflow-hidden rounded-2xl bg-[#E0F7FA] p-6 transition-all hover:-translate-y-1 hover:shadow-md border border-[#B2EBF2]">
         <div class="flex items-start justify-between">
             <div>
-                <p class="text-sm font-bold text-[#00838F] mb-1">Total SKS</p>
+                <p class="text-sm font-bold text-[#00838F] mb-1">SKS Berjalan</p>
                 <h3 class="text-4xl font-bold text-[#00ACC1]">
-                    {{ auth()->user()->mahasiswa->activeKrs->total_sks ?? 0 }}
+                    {{ $mahasiswa->activeKrs->total_sks ?? 0 }}
                 </h3>
-                <p class="mt-2 text-xs text-[#4DD0E1]">Tidak Lulus: 0</p>
+                <p class="mt-2 text-xs text-[#4DD0E1]">Semester Aktif</p>
             </div>
             <div class="rounded-lg bg-[#B2EBF2] p-2 text-[#00838F]">
                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -78,11 +76,11 @@
             <div>
                 <p class="text-sm font-bold text-[#8E24AA] mb-1">Semester Aktif</p>
                 <h3 class="text-4xl font-bold text-[#9C27B0]">
-                    {{ auth()->user()->mahasiswa->semester_sekarang ?? '5' }}
+                    {{ $mahasiswa->semester_sekarang ?? '1' }}
                 </h3>
                 <p class="mt-2 text-xs text-[#BA68C8]">
-                    {{ auth()->user()->mahasiswa->activeKrs->semesterAjaran->tahun_ajaran ?? '2025/2026' }}
-                    {{ ucfirst(auth()->user()->mahasiswa->activeKrs->semesterAjaran->semester ?? 'Ganjil') }}
+                    {{ $mahasiswa->activeKrs->semesterAjaran->tahun_ajaran ?? '-' }}
+                    {{ ucfirst($mahasiswa->activeKrs->semesterAjaran->semester ?? '-') }}
                 </p>
             </div>
             <div class="rounded-lg bg-[#E1BEE7] p-2 text-[#8E24AA]">
@@ -96,10 +94,10 @@
         <div class="flex items-start justify-between">
             <div class="flex-1">
                 <p class="text-sm font-bold text-[#E65100] mb-1">Dosen Wali</p>
-                <h3 class="text-3xl font-bold text-[#FB8C00] truncate" title="{{ auth()->user()->mahasiswa?->dosenWali?->nama ?? 'Belum ada' }}">
-                    {{ auth()->user()->mahasiswa?->dosenWali?->nama ?? 'Belum ada' }}
+                <h3 class="text-sm font-bold text-[#FB8C00] truncate" title="{{ $mahasiswa->dosenWali->nama ?? 'Belum ada' }}">
+                    {{ $mahasiswa->dosenWali->nama ?? 'Belum ada' }}
                 </h3>
-                <p class="mt-2 text-xs text-[#FFB74D]">2025/2026 Ganjil</p>
+                <p class="mt-2 text-xs text-[#FFB74D]">NIP: {{ $mahasiswa->dosenWali->nip ?? '-' }}</p>
             </div>
             <div class="rounded-lg bg-[#FFE0B2] p-2 text-[#E65100] flex-shrink-0 ml-2">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -163,23 +161,15 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                @php
-                    $semesters = [
-                        ['Ganjil 23/24', '3.48', 20, '3.48', 20],
-                        ['Genap 23/24', '3.22', 21, '2.82', 41],
-                        ['Ganjil 24/25', '3.64', 21, '3.56', 61],
-                        ['Genap 24/25', '3.58', 20, '3.57', 81],
-                        ['Ganjil 25/26', '-', 19, '2.9', 101],
-                    ];
-                @endphp
-
-                @foreach($semesters as $sem)
+                @foreach($mahasiswa->khs as $k)
                 <tr class="group transition-colors hover:bg-gray-50">
-                    <td class="py-5 px-4 text-sm font-bold text-gray-800">{{ $sem[0] }}</td>
-                    <td class="py-5 px-4 text-sm font-bold text-blue-500">{{ $sem[1] }}</td>
-                    <td class="py-5 px-4 text-sm font-bold text-gray-800">{{ $sem[2] }}</td>
-                    <td class="py-5 px-4 text-sm font-bold text-emerald-500">{{ $sem[3] }}</td>
-                    <td class="py-5 px-4 text-sm font-bold text-gray-800">{{ $sem[4] }}</td>
+                    <td class="py-5 px-4 text-sm font-bold text-gray-800">
+                        {{ ucfirst($k->semesterAjaran->semester) }} {{ $k->semesterAjaran->tahun_ajaran }}
+                    </td>
+                    <td class="py-5 px-4 text-sm font-bold text-blue-500">{{ number_format($k->ip, 2) }}</td>
+                    <td class="py-5 px-4 text-sm font-bold text-gray-800">{{ $k->total_sks }}</td>
+                    <td class="py-5 px-4 text-sm font-bold text-emerald-500">{{ number_format($k->ipk, 2) }}</td>
+                    <td class="py-5 px-4 text-sm font-bold text-gray-800">-</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -201,10 +191,10 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(academicCtx, {
         type: 'line',
         data: {
-            labels: ['Ganjil 23/24', 'Genap 23/24', 'Ganjil 24/25', 'Genap 24/25'],
+            labels: {!! json_encode($progressLabels) !!},
             datasets: [{
                 label: 'IPS',
-                data: [3.2, 3.0, 3.5, 3.7], // Matching image visual approximation
+                data: {!! json_encode($ipsData) !!},
                 borderColor: '#0ea5e9', // Sky Blue
                 backgroundColor: '#ffffff',
                 borderWidth: 2,
@@ -213,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tension: 0
             }, {
                 label: 'IPK',
-                data: [3.2, 2.8, 3.3, 3.65], 
+                data: {!! json_encode($ipkData) !!}, 
                 borderColor: '#3b82f6', // Blue
                 backgroundColor: '#ffffff',
                 borderWidth: 2,
@@ -247,14 +237,18 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(gradeCtx, {
         type: 'pie',
         data: {
-            labels: ['A 30%', 'B 23.6%', 'C 3.8%', 'D 14.5%', 'E 2.1%'],
+            labels: {!! json_encode($distributionData->keys()->map(function($key) use ($distributionData) { return $key . ' ' . number_format($distributionData[$key], 1) . '%'; })) !!},
             datasets: [{
-                data: [30, 23.6, 3.8, 14.5, 2.1],
+                data: {!! json_encode($distributionData->values()) !!},
                 backgroundColor: [
-                    '#15803d', // Green A
-                    '#0ea5e9', // Blue B
-                    '#fbbf24', // Yellow C
-                    '#a855f7', // Purple D/E
+                    '#15803d', // Green
+                    '#16a34a',
+                    '#22c55e',
+                    '#4ade80',
+                    '#86efac',
+                    '#0ea5e9', // Blue
+                    '#fbbf24', // Yellow
+                    '#a855f7', // Purple
                     '#f97316'
                 ],
                 borderWidth: 0
@@ -274,19 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(detailCtx, {
         type: 'bar',
         data: {
-            labels: ['A', 'B+', 'B', 'C+', 'C'],
+            labels: {!! json_encode(array_keys($gradeStatsFinal)) !!},
             datasets: [{
                 label: 'Total SKS',
-                data: [38, 28, 18, 5, 3],
-                backgroundColor: [
-                    '#15803d', // A
-                    '#0ea5e9', // B+
-                    '#8b5cf6', // B (Purple)
-                    '#fbbf24', // C+
-                    '#f97316'  // C
-                ],
+                data: {!! json_encode(array_values($gradeStatsFinal)) !!},
+                backgroundColor: '#2E7D55',
                 borderRadius: 4,
-                barThickness: 25
+                barThickness: 20
             }]
         },
         options: {
@@ -296,7 +284,6 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 40,
                     grid: { display: false },
                     ticks: { display: true }
                 },

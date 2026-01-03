@@ -5,7 +5,7 @@
 {{-- Summary Cards --}}
 <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
     {{-- Total Semester --}}
-    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#1F653F] to-[#2F8054] text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-3">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
@@ -15,14 +15,14 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Total Semester</p>
-            <p class="text-4xl font-bold">5</p>
+            <p class="text-4xl font-bold">{{ $stats['total_semester'] }}</p>
             <p class="text-xs opacity-75 mt-1">Semester Ditempuh</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
     </div>
 
     {{-- IPK Kumulatif --}}
-    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-3">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
@@ -32,7 +32,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">IPK Kumulatif</p>
-            <p class="text-4xl font-bold">3.42</p>
+            <p class="text-4xl font-bold">{{ number_format($stats['ipk_kumulatif'], 2) }}</p>
             <p class="text-xs opacity-75 mt-1">Sangat Memuaskan</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Total SKS</p>
-            <p class="text-4xl font-bold">101</p>
+            <p class="text-4xl font-bold">{{ $stats['total_sks'] }}</p>
             <p class="text-xs opacity-75 mt-1">SKS Terkumpul</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -66,7 +66,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Rata-rata IPS</p>
-            <p class="text-4xl font-bold">3.35</p>
+            <p class="text-4xl font-bold">{{ number_format($stats['avg_ips'], 2) }}</p>
             <p class="text-xs opacity-75 mt-1">Performa Konsisten</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -92,7 +92,16 @@
         </div>
     </div>
     <div class="h-64">
-        <canvas id="performanceChart"></canvas>
+        @if(count($chart['labels']) > 0)
+            <canvas id="performanceChart"></canvas>
+        @else
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <p>Belum ada data akademik untuk divisualisasikan.</p>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -104,67 +113,12 @@
     </div>
 
     <div class="p-6">
-        @php
-            $semesters = [
-                [
-                    'no' => 1,
-                    'semester' => '2023/2024 Ganjil',
-                    'ips' => '3.48',
-                    'sks' => '20',
-                    'ipk' => '3.48',
-                    'sks_total' => '20',
-                    'status' => 'Lulus',
-                    'badge_color' => 'green'
-                ],
-                [
-                    'no' => 2,
-                    'semester' => '2023/2024 Genap',
-                    'ips' => '3.57',
-                    'sks' => '21',
-                    'ipk' => '3.52',
-                    'sks_total' => '41',
-                    'status' => 'Lulus',
-                    'badge_color' => 'green'
-                ],
-                [
-                    'no' => 3,
-                    'semester' => '2024/2025 Ganjil',
-                    'ips' => '3.64',
-                    'sks' => '21',
-                    'ipk' => '3.56',
-                    'sks_total' => '62',
-                    'status' => 'Lulus',
-                    'badge_color' => 'green'
-                ],
-                [
-                    'no' => 4,
-                    'semester' => '2024/2025 Genap',
-                    'ips' => '3.58',
-                    'sks' => '20',
-                    'ipk' => '3.57',
-                    'sks_total' => '82',
-                    'status' => 'Lulus',
-                    'badge_color' => 'green'
-                ],
-                [
-                    'no' => 5,
-                    'semester' => '2025/2026 Ganjil',
-                    'ips' => '0',
-                    'sks' => '19',
-                    'ipk' => '2.9',
-                    'sks_total' => '101',
-                    'status' => 'Aktif',
-                    'badge_color' => 'blue'
-                ],
-            ];
-        @endphp
-
         <div class="space-y-4">
-            @foreach($semesters as $sem)
+            @forelse($semestersData as $sem)
             <div class="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-xl p-5 hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">
+                        <div class="w-12 h-12 bg-gradient-to-br from-[#1F653F] to-[#2F8054] text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">
                             {{ $sem['no'] }}
                         </div>
                         <div>
@@ -180,7 +134,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-gray-200">
                         <p class="text-xs text-gray-500 mb-1">IPS</p>
-                        <p class="text-2xl font-bold text-blue-600">{{ $sem['ips'] }}</p>
+                        <p class="text-2xl font-bold text-blue-600">{{ number_format($sem['ips'], 2) }}</p>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-gray-200">
                         <p class="text-xs text-gray-500 mb-1">SKS Semester</p>
@@ -188,7 +142,7 @@
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-gray-200">
                         <p class="text-xs text-gray-500 mb-1">IPK</p>
-                        <p class="text-2xl font-bold text-green-600">{{ $sem['ipk'] }}</p>
+                        <p class="text-2xl font-bold text-green-600">{{ number_format($sem['ipk'], 2) }}</p>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-gray-200">
                         <p class="text-xs text-gray-500 mb-1">Total SKS</p>
@@ -198,14 +152,18 @@
                         <p class="text-xs text-gray-500 mb-1">Progress</p>
                         <div class="flex items-center gap-2">
                             <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" style="width: {{ ($sem['sks_total'] / 144) * 100 }}%"></div>
+                                <div class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" style="width: {{ min(100, ($sem['sks_total'] / 144) * 100) }}%"></div>
                             </div>
-                            <span class="text-xs font-semibold text-gray-700">{{ round(($sem['sks_total'] / 144) * 100) }}%</span>
+                            <span class="text-xs font-semibold text-gray-700">{{ round(min(100, ($sem['sks_total'] / 144) * 100)) }}%</span>
                         </div>
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="text-center py-12 text-gray-500">
+                <p>Belum ada data semester tersedia.</p>
+            </div>
+            @endforelse
         </div>
     </div>
 </div>
@@ -221,10 +179,10 @@
             </div>
             <div>
                 <p class="text-sm text-gray-600">IPS Tertinggi</p>
-                <p class="text-3xl font-bold text-gray-800">3.64</p>
+                <p class="text-3xl font-bold text-gray-800">{{ number_format($stats['max_ips'], 2) }}</p>
             </div>
         </div>
-        <p class="text-sm text-gray-600">Semester 2024/2025 Ganjil</p>
+        <p class="text-sm text-gray-600">Semester {{ $stats['max_ips_semester'] }}</p>
     </div>
 
     <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 p-6 rounded-2xl">
@@ -236,10 +194,10 @@
             </div>
             <div>
                 <p class="text-sm text-gray-600">Semester Lulus</p>
-                <p class="text-3xl font-bold text-gray-800">4</p>
+                <p class="text-3xl font-bold text-gray-800">{{ $stats['lulus_count'] }}</p>
             </div>
         </div>
-        <p class="text-sm text-gray-600">Dari 5 semester</p>
+        <p class="text-sm text-gray-600">Dari {{ $stats['total_semester'] }} semester</p>
     </div>
 
     <div class="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 p-6 rounded-2xl">
@@ -250,32 +208,33 @@
                 </svg>
             </div>
             <div>
-                <p class="text-sm text-gray-600">Estimasi Lulus</p>
-                <p class="text-3xl font-bold text-gray-800">3</p>
+                <p class="text-sm text-gray-600">Sisa Semester</p>
+                <p class="text-3xl font-bold text-gray-800">{{ $stats['estimasi_lulus'] }}</p>
             </div>
         </div>
-        <p class="text-sm text-gray-600">Semester lagi (berdasarkan 144 SKS)</p>
+        <p class="text-sm text-gray-600">Hingga Semester 8</p>
     </div>
 </div>
 
 {{-- Footer --}}
 <div class="mt-8 text-center text-sm text-gray-500 pb-6">
-    <p>2025 Bagian Teknologi Informasi Wimar Bisnis Indonesia</p>
+    <p>© {{ date('Y') }} Bagian Teknologi Informasi Wimar Bisnis Indonesia</p>
 </div>
 
 @endsection
 
 @push('scripts')
+@if(count($chart['labels']) > 0)
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('performanceChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['2023/2024 Ganjil', '2023/2024 Genap', '2024/2025 Ganjil', '2024/2025 Genap', '2025/2026 Ganjil'],
+            labels: {!! json_encode($chart['labels']) !!},
             datasets: [{
                 label: 'IPS',
-                data: [3.48, 3.57, 3.64, 3.58, 0],
+                data: {!! json_encode($chart['ips']) !!},
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 tension: 0.4,
@@ -287,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointBorderWidth: 2
             }, {
                 label: 'IPK',
-                data: [3.48, 3.52, 3.56, 3.57, 2.9],
+                data: {!! json_encode($chart['ipk']) !!},
                 borderColor: '#10b981',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 tension: 0.4,
@@ -323,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: {
                     beginAtZero: false,
                     min: 0,
-                    max: 4,
+                    max: 4.1,
                     ticks: {
                         stepSize: 0.5
                     },
@@ -345,4 +304,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+@endif
 @endpush

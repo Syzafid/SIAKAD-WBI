@@ -5,16 +5,23 @@
 {{-- Action Bar --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
     <div class="flex items-center justify-between">
-        <div>
-            <p class="text-sm text-gray-500">Semester</p>
-            <p class="text-xl font-bold text-gray-800">2023/2024 Ganjil</p>
+        <div class="flex items-center gap-4">
+            <a href="{{ route('arsip-nilai.index') }}" class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#1B5937] hover:bg-green-50 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <div>
+                <p class="text-sm text-gray-500">Arsip Nilai Semester</p>
+                <p class="text-xl font-bold text-gray-800">{{ $khs->semesterAjaran->tahun_ajaran }} {{ ucfirst($khs->semesterAjaran->semester) }}</p>
+            </div>
         </div>
-        <button class="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold transition shadow-md flex items-center gap-2">
+        <a href="{{ route('arsip-nilai.export', $khs->khs_id) }}" class="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold transition shadow-md flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <span>Download PDF</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -31,7 +38,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Total Mata Kuliah</p>
-            <p class="text-4xl font-bold">9</p>
+            <p class="text-4xl font-bold">{{ $totalCourses }}</p>
             <p class="text-xs opacity-75 mt-1">Semester ini</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -48,7 +55,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Total SKS</p>
-            <p class="text-4xl font-bold">20</p>
+            <p class="text-4xl font-bold">{{ $khs->total_sks }}</p>
             <p class="text-xs opacity-75 mt-1">Kredit semester</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -65,14 +72,14 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">SKS × Indeks</p>
-            <p class="text-4xl font-bold">69.5</p>
+            <p class="text-4xl font-bold">{{ number_format($khs->total_bobot, 2) }}</p>
             <p class="text-xs opacity-75 mt-1">Total poin</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
     </div>
 
     {{-- Indeks Prestasi --}}
-    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#1B5937] to-[#2F8054] text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-3">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
@@ -82,7 +89,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">Indeks Prestasi</p>
-            <p class="text-4xl font-bold">3.48</p>
+            <p class="text-4xl font-bold">{{ number_format($khs->ip, 2) }}</p>
             <p class="text-xs opacity-75 mt-1">Sangat Memuaskan</p>
         </div>
         <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -92,24 +99,14 @@
 {{-- Grade Distribution Chart --}}
 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
     <h2 class="text-xl font-bold text-gray-800 mb-6">Distribusi Nilai</h2>
-    <div class="grid grid-cols-5 gap-4">
-        @php
-            $gradeDistribution = [
-                ['grade' => 'A', 'count' => 4, 'color' => 'green', 'percentage' => 44],
-                ['grade' => 'B+', 'count' => 3, 'color' => 'blue', 'percentage' => 33],
-                ['grade' => 'B', 'count' => 1, 'color' => 'yellow', 'percentage' => 11],
-                ['grade' => 'C', 'count' => 1, 'color' => 'orange', 'percentage' => 11],
-                ['grade' => 'D/E', 'count' => 0, 'color' => 'red', 'percentage' => 0],
-            ];
-        @endphp
-
-        @foreach($gradeDistribution as $grade)
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        @foreach($distribution as $grade => $data)
         <div class="text-center">
-            <div class="bg-{{ $grade['color'] }}-100 rounded-xl p-6 mb-3">
-                <p class="text-4xl font-bold text-{{ $grade['color'] }}-600">{{ $grade['count'] }}</p>
+            <div class="bg-{{ $data['color'] }}-100 rounded-xl p-6 mb-3 transition-transform hover:scale-105">
+                <p class="text-4xl font-bold text-{{ $data['color'] }}-600">{{ $data['count'] }}</p>
             </div>
-            <p class="text-sm font-semibold text-gray-700 mb-1">Grade {{ $grade['grade'] }}</p>
-            <p class="text-xs text-gray-500">{{ $grade['percentage'] }}%</p>
+            <p class="text-sm font-semibold text-gray-700 mb-1">Grade {{ $grade }}</p>
+            <p class="text-xs text-gray-500">{{ round(($data['count'] / max(1, $totalCourses)) * 100) }}%</p>
         </div>
         @endforeach
     </div>
@@ -118,157 +115,61 @@
 {{-- Grades List --}}
 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
     <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-5 border-b border-gray-200">
-        <h2 class="text-xl font-bold text-gray-800">Nilai Semester 2023/2024 Ganjil</h2>
-        <p class="text-sm text-gray-500 mt-1">Detail nilai per mata kuliah</p>
+        <h2 class="text-xl font-bold text-gray-800">Daftar Nilai Semester</h2>
+        <p class="text-sm text-gray-500 mt-1">Detail nilai per mata kuliah untuk semester ini</p>
     </div>
 
     <div class="p-6">
-        @php
-            $courses = [
-                [
-                    'no' => 1,
-                    'kode' => 'RPL11201',
-                    'nama' => 'Agama',
-                    'nilai_angka' => '78.15',
-                    'nilai_huruf' => 'B+',
-                    'indeks' => '3.50',
-                    'sks' => '2.00',
-                    'sks_indeks' => '7',
-                    'grade_color' => 'blue'
-                ],
-                [
-                    'no' => 2,
-                    'kode' => 'RPL12208',
-                    'nama' => 'Arsitektur dan Organisasi Komputer',
-                    'nilai_angka' => '76.00',
-                    'nilai_huruf' => 'B+',
-                    'indeks' => '3.50',
-                    'sks' => '2.00',
-                    'sks_indeks' => '7',
-                    'grade_color' => 'blue'
-                ],
-                [
-                    'no' => 3,
-                    'kode' => 'RPL11302',
-                    'nama' => 'Bahasa Indonesia',
-                    'nilai_angka' => '82.35',
-                    'nilai_huruf' => 'A',
-                    'indeks' => '4.00',
-                    'sks' => '3.00',
-                    'sks_indeks' => '12',
-                    'grade_color' => 'green'
-                ],
-                [
-                    'no' => 4,
-                    'kode' => 'RPL12204',
-                    'nama' => 'Berpikir Kritis',
-                    'nilai_angka' => '75.50',
-                    'nilai_huruf' => 'B+',
-                    'indeks' => '3.50',
-                    'sks' => '2.00',
-                    'sks_indeks' => '7',
-                    'grade_color' => 'blue'
-                ],
-                [
-                    'no' => 5,
-                    'kode' => 'RPL12206',
-                    'nama' => 'Matematika Diskrit',
-                    'nilai_angka' => '87.00',
-                    'nilai_huruf' => 'A',
-                    'indeks' => '4.00',
-                    'sks' => '2.00',
-                    'sks_indeks' => '8',
-                    'grade_color' => 'green'
-                ],
-                [
-                    'no' => 6,
-                    'kode' => 'RPL12309',
-                    'nama' => 'Pemograman Dasar',
-                    'nilai_angka' => '76.25',
-                    'nilai_huruf' => 'B+',
-                    'indeks' => '3.50',
-                    'sks' => '3.00',
-                    'sks_indeks' => '10.5',
-                    'grade_color' => 'blue'
-                ],
-                [
-                    'no' => 7,
-                    'kode' => 'RPL12207',
-                    'nama' => 'Pengenalan Rekayasa Perangkat Lunak',
-                    'nilai_angka' => '72.00',
-                    'nilai_huruf' => 'B',
-                    'indeks' => '3.00',
-                    'sks' => '2.00',
-                    'sks_indeks' => '6',
-                    'grade_color' => 'yellow'
-                ],
-                [
-                    'no' => 8,
-                    'kode' => 'RPL12203',
-                    'nama' => 'Pola Pikir Kewirausahaan',
-                    'nilai_angka' => '56.40',
-                    'nilai_huruf' => 'C',
-                    'indeks' => '2.00',
-                    'sks' => '2.00',
-                    'sks_indeks' => '4',
-                    'grade_color' => 'orange'
-                ],
-                [
-                    'no' => 9,
-                    'kode' => 'RPL12205',
-                    'nama' => 'Praktik Komunikasi dan Presentasi',
-                    'nilai_angka' => '82.00',
-                    'nilai_huruf' => 'A',
-                    'indeks' => '4.00',
-                    'sks' => '2.00',
-                    'sks_indeks' => '8',
-                    'grade_color' => 'green'
-                ],
-            ];
-        @endphp
-
         <div class="space-y-4">
-            @foreach($courses as $course)
+            @foreach($khs->details as $index => $detail)
+            @php
+                $color = 'gray';
+                if ($detail->nilai_huruf == 'A') $color = 'green';
+                elseif (in_array($detail->nilai_huruf, ['A-', 'B+', 'B'])) $color = 'blue';
+                elseif ($detail->nilai_huruf == 'B-') $color = 'yellow';
+                elseif (in_array($detail->nilai_huruf, ['C+', 'C'])) $color = 'orange';
+                elseif (in_array($detail->nilai_huruf, ['D', 'E'])) $color = 'red';
+            @endphp
             <div class="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-xl p-5 hover:shadow-lg transition duration-200">
                 <div class="flex items-center gap-5">
                     {{-- Number Badge --}}
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md flex-shrink-0">
-                        {{ $course['no'] }}
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#1B5937] to-[#2F8054] text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md flex-shrink-0">
+                        {{ $index + 1 }}
                     </div>
 
                     {{-- Course Info --}}
                     <div class="flex-1">
                         <div class="flex items-start justify-between mb-3">
                             <div>
-                                <p class="text-sm font-semibold text-gray-500">{{ $course['kode'] }}</p>
-                                <h3 class="text-lg font-bold text-gray-800">{{ $course['nama'] }}</h3>
+                                <p class="text-sm font-semibold text-gray-500">{{ $detail->matakuliah->kode_mk }}</p>
+                                <h3 class="text-lg font-bold text-gray-800">{{ $detail->matakuliah->nama_mk }}</h3>
                             </div>
-                            <span class="px-4 py-2 bg-{{ $course['grade_color'] }}-100 text-{{ $course['grade_color'] }}-700 rounded-full text-lg font-bold">
-                                {{ $course['nilai_huruf'] }}
+                            <span class="px-4 py-2 bg-{{ $color }}-100 text-{{ $color }}-700 rounded-full text-lg font-bold">
+                                {{ $detail->nilai_huruf }}
                             </span>
                         </div>
 
                         {{-- Metrics Grid --}}
-                        <div class="grid grid-cols-5 gap-4">
+                        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                             <div class="bg-white p-3 rounded-lg border border-gray-200">
                                 <p class="text-xs text-gray-500 mb-1">Nilai Angka</p>
-                                <p class="text-lg font-bold text-gray-800">{{ $course['nilai_angka'] }}</p>
+                                <p class="text-lg font-bold text-gray-800">{{ number_format($detail->nilai_angka, 2) }}</p>
                             </div>
                             <div class="bg-white p-3 rounded-lg border border-gray-200">
                                 <p class="text-xs text-gray-500 mb-1">Nilai Huruf</p>
-                                <p class="text-lg font-bold text-{{ $course['grade_color'] }}-600">{{ $course['nilai_huruf'] }}</p>
+                                <p class="text-lg font-bold text-{{ $color }}-600">{{ $detail->nilai_huruf }}</p>
                             </div>
                             <div class="bg-white p-3 rounded-lg border border-gray-200">
                                 <p class="text-xs text-gray-500 mb-1">Indeks</p>
-                                <p class="text-lg font-bold text-purple-600">{{ $course['indeks'] }}</p>
+                                <p class="text-lg font-bold text-purple-600">{{ number_format($detail->bobot, 2) }}</p>
                             </div>
                             <div class="bg-white p-3 rounded-lg border border-gray-200">
                                 <p class="text-xs text-gray-500 mb-1">SKS</p>
-                                <p class="text-lg font-bold text-blue-600">{{ $course['sks'] }}</p>
+                                <p class="text-lg font-bold text-blue-600">{{ $detail->sks }}</p>
                             </div>
                             <div class="bg-white p-3 rounded-lg border border-gray-200">
                                 <p class="text-xs text-gray-500 mb-1">SKS × Indeks</p>
-                                <p class="text-lg font-bold text-orange-600">{{ $course['sks_indeks'] }}</p>
+                                <p class="text-lg font-bold text-orange-600">{{ number_format($detail->sks * $detail->bobot, 2) }}</p>
                             </div>
                         </div>
                     </div>
@@ -278,26 +179,25 @@
         </div>
 
         {{-- Summary Footer --}}
-        <div class="mt-6 bg-gradient-to-r from-teal-50 to-teal-100 border-2 border-teal-200 rounded-xl p-6">
-            <div class="flex items-center justify-between">
+        <div class="mt-6 bg-gradient-to-r from-green-50 to-green-100 border-2 border-[#1B5937]/20 rounded-xl p-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-8">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">TOTAL SKS</p>
-                        <p class="text-3xl font-bold text-gray-800">20</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $khs->total_sks }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 mb-1">TOTAL SKS × INDEKS</p>
-                        <p class="text-3xl font-bold text-orange-600">69.5</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ number_format($khs->total_bobot, 2) }}</p>
                     </div>
                 </div>
-                <div class="text-right">
+                <div class="text-center md:text-right">
                     <p class="text-sm text-gray-600 mb-1">INDEKS PRESTASI SEMESTER</p>
-                    <p class="text-5xl font-bold text-green-600">3.48</p>
+                    <p class="text-5xl font-bold text-[#1B5937]">{{ number_format($khs->ip, 2) }}</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 @endsection

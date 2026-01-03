@@ -16,7 +16,7 @@
                 </div>
             </div>
             <p class="text-sm opacity-90 mb-1">IPK Kumulatif</p>
-            <p class="text-5xl font-bold">3.0</p>
+            <p class="text-5xl font-bold">{{ $ipk }}</p>
         </div>
         <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
         <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
@@ -33,8 +33,8 @@
                 </div>
             </div>
             <p class="text-sm text-gray-600 mb-1">Rata-rata IPS</p>
-            <p class="text-5xl font-bold text-gray-900">3.0</p>
-            <p class="text-xs text-gray-500 mt-1">Dari 5 Semester</p>
+            <p class="text-5xl font-bold text-gray-900">{{ $avgIps }}</p>
+            <p class="text-xs text-gray-500 mt-1">Dari {{ $countSemester }} Semester</p>
         </div>
     </div>
 
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <p class="text-sm text-gray-600 mb-1">SKS yang sudah ditempuh</p>
-            <p class="text-5xl font-bold text-gray-900">62</p>
+            <p class="text-5xl font-bold text-gray-900">{{ $sksDitempuh }}</p>
         </div>
     </div>
 
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <p class="text-sm text-gray-600 mb-1">Semester yang dijalani</p>
-            <p class="text-5xl font-bold text-gray-900">3</p>
+            <p class="text-5xl font-bold text-gray-900">{{ $mahasiswa->semester_sekarang }}</p>
         </div>
     </div>
 </div>
@@ -77,12 +77,12 @@
             <h2 class="text-green-900 font-bold text-lg">Detail Tabel</h2>
         </div>
         
-        <button class="bg-[#1a5c38] hover:bg-[#14452a] text-white px-6 py-2.5 rounded-lg text-sm font-bold transition duration-200 flex items-center gap-2 shadow-sm">
+        <a href="{{ route('keberhasilanStudi.export') }}" class="bg-[#1a5c38] hover:bg-[#14452a] text-white px-6 py-2.5 rounded-lg text-sm font-bold transition duration-200 flex items-center gap-2 shadow-sm">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <span>Export PDF</span>
-        </button>
+        </a>
     </div>
 
     {{-- Table Content --}}
@@ -98,71 +98,36 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-                {{-- Row 1 --}}
-                <tr class="bg-white hover:bg-gray-50 transition">
+                @php $cumulativeSks = 0; @endphp
+                @forelse($khsHistory as $index => $khs)
+                @php $cumulativeSks += $khs->total_sks; @endphp
+                <tr class="{{ $index % 2 != 0 ? 'bg-[#e8fce8] hover:bg-[#dfffe0]' : 'bg-white hover:bg-gray-50' }} transition">
                     <td class="px-6 py-5">
                         <div>
-                            <p class="font-bold text-gray-900 text-base">Semester 1 (Ganjil)</p>
-                            <p class="text-sm text-gray-500 mt-1">1 (Satu)</p>
+                            <p class="font-bold text-gray-900 text-base">{{ $khs->semesterAjaran->tahun_ajaran }} {{ ucfirst($khs->semesterAjaran->semester) }}</p>
+                            <p class="text-sm text-gray-500 mt-1">Semester {{ $index + 1 }}</p>
                         </div>
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#00b4d8]">3.48</span>
+                        <span class="text-xl font-bold text-[#00b4d8]">{{ number_format($khs->ip, 2) }}</span>
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#1a5c38]">3.48</span>
+                        <span class="text-xl font-bold text-[#1a5c38]">{{ number_format($khs->ipk, 2) }}</span>
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-gray-400">20</span>
+                        <span class="text-base font-bold text-gray-400">{{ $khs->total_sks }}</span>
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-[#2ecc71]">20</span>
+                        <span class="text-base font-bold text-[#2ecc71]">{{ $cumulativeSks }}</span>
                     </td>
                 </tr>
-
-                {{-- Row 2 --}}
-                <tr class="bg-[#e8fce8] hover:bg-[#dfffe0] transition">
-                    <td class="px-6 py-5">
-                        <div>
-                            <p class="font-bold text-gray-900 text-base">Semester 1 (Ganjil)</p>
-                            <p class="text-sm text-gray-500 mt-1">1 (Satu)</p>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#00b4d8]">3.48</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#1a5c38]">3.48</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-gray-400">20</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-[#2ecc71]">20</span>
+                @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 italic">
+                        Belum ada data riwayat keberhasilan studi.
                     </td>
                 </tr>
-
-                {{-- Row 3 --}}
-                <tr class="bg-white hover:bg-gray-50 transition">
-                    <td class="px-6 py-5">
-                        <div>
-                            <p class="font-bold text-gray-900 text-base">Semester 1 (Ganjil)</p>
-                            <p class="text-sm text-gray-500 mt-1">1 (Satu)</p>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#00b4d8]">3.48</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-xl font-bold text-[#1a5c38]">3.48</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-gray-400">20</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-base font-bold text-[#2ecc71]">20</span>
-                    </td>
-                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
