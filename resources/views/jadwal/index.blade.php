@@ -2,6 +2,20 @@
 
 @section('content')
 
+@if(session('success'))
+    <div class="mb-6 rounded-xl bg-green-100 border border-green-200 p-4 text-green-700 flex items-center gap-3">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <p class="text-sm font-bold">{{ session('success') }}</p>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="mb-6 rounded-xl bg-red-100 border border-red-200 p-4 text-red-700 flex items-center gap-3">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <p class="text-sm font-bold">{{ session('error') }}</p>
+    </div>
+@endif
+
 <div class="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-[#1b4d36] to-[#3a9e6c] p-10 text-white shadow-xl">
     
     <div class="pointer-events-none absolute left-6 top-6 grid grid-cols-4 gap-2 opacity-30">
@@ -57,8 +71,8 @@
     <div class="flex items-center justify-between rounded-xl border-l-[6px] border-green-500 bg-white p-6 shadow-sm">
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Kelas Tergabung</p>
-            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">5</h3>
-            <p class="mt-1 text-[10px] text-gray-400">dari 8 mata kuliah</p>
+            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">{{ $joined_classes }}</h3>
+            <p class="mt-1 text-[10px] text-gray-400">dari {{ $total_courses }} mata kuliah</p>
         </div>
         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600">
              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -68,7 +82,7 @@
     <div class="flex items-center justify-between rounded-xl border-l-[6px] border-red-500 bg-white p-6 shadow-sm">
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Belum Bergabung</p>
-            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">3</h3>
+            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">{{ $not_joined }}</h3>
             <p class="mt-1 text-[10px] text-red-500 font-medium">Segera join kelas!</p>
         </div>
         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 text-red-500">
@@ -79,7 +93,7 @@
     <div class="flex items-center justify-between rounded-xl border-l-[6px] border-blue-500 bg-white p-6 shadow-sm">
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Total Mata Kuliah</p>
-            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">8</h3>
+            <h3 class="mt-1 text-4xl font-extrabold text-gray-900">{{ $total_courses }}</h3>
             <p class="mt-1 text-[10px] text-gray-400">Semester Aktif</p>
         </div>
         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
@@ -100,18 +114,7 @@
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-            @php
-                $courses = array_fill(0, 7, [
-                    'kode' => '5508',
-                    'nama' => 'Agile Development',
-                    'dosen' => 'Rizki Ramadhansyah, S.T., M.Kom',
-                    'ruang' => 'Ruang : 4.1',
-                    'hari' => 'Senin',
-                    'jam' => '08:00 - 10:00'
-                ]);
-            @endphp
-
-            @foreach($courses as $index => $course)
+            @forelse($schedules as $index => $course)
             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-green-50/30' }}">
                 <td class="py-6 px-6 align-top">
                     <span class="inline-block rounded bg-green-100 px-2.5 py-1 text-xs font-bold text-green-700">
@@ -132,12 +135,29 @@
                     </div>
                 </td>
                 <td class="py-6 px-6 align-top text-center">
-                    <button class="rounded bg-[#00B050] px-6 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-green-600">
-                        Join Kelas
-                    </button>
+                    @if($course['status'] === 'terverifikasi')
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            Tergabung
+                        </span>
+                    @else
+                        <form action="{{ route('jadwal.join') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="kelas_id" value="{{ $course['kelas_id'] }}">
+                            <button type="submit" class="rounded bg-[#00B050] px-6 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-green-600">
+                                Join Kelas
+                            </button>
+                        </form>
+                    @endif
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="5" class="py-12 px-6 text-center text-gray-400">
+                    <p class="text-sm">Tidak ada jadwal kuliah untuk semester ini.</p>
+                </td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

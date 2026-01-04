@@ -2,93 +2,66 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Mahasiswa\DashboardController;
+use App\Http\Controllers\Mahasiswa\JadwalController;
+use App\Http\Controllers\Mahasiswa\KrsController;
+use App\Http\Controllers\Mahasiswa\KeberhasilanStudiController;
+use App\Http\Controllers\Mahasiswa\KehadiranController;
+use App\Http\Controllers\Mahasiswa\KonsultasiNilaiController;
+use App\Http\Controllers\Mahasiswa\ProfileController;
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Mahasiswa Routes
 Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard.index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    
+    // Jadwal
+    Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+    Route::post('/jadwal/join', [JadwalController::class, 'joinKelas'])->name('jadwal.join');
+
+    // KRS
+    Route::get('KRS', [KrsController::class, 'index'])->name('KRS.index');
+    Route::get('KRS/create', [KrsController::class, 'create'])->name('KRS.create');
+    Route::post('KRS', [KrsController::class, 'store'])->name('KRS.store');
+    Route::get('KRS/{id}', [KrsController::class, 'show'])->name('KRS.show');
+
+    // Keberhasilan Studi
+    Route::get('keberhasilanStudi', [KeberhasilanStudiController::class, 'index'])->name('keberhasilanStudi.index');
+    Route::get('keberhasilanStudi/export', [KeberhasilanStudiController::class, 'exportPdf'])->name('keberhasilanStudi.export');
+
+    // Konsultasi Nilai
+    Route::get('konsultasiNilai', [KonsultasiNilaiController::class, 'index'])->name('konsultasiNilai.index');
+    
+    // Kehadiran
+    Route::get('kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+
+    // Profil
+    Route::get('profilMahasiswa', [ProfileController::class, 'index'])->name('profilMahasiswa.index');
+    Route::post('profilMahasiswa', [ProfileController::class, 'update'])->name('profilMahasiswa.update');
+    Route::post('profilMahasiswa/password', [ProfileController::class, 'changePassword'])->name('profilMahasiswa.password');
+
+    // Remaining student views
+    Route::get('kuliahMahasiswa', [App\Http\Controllers\Mahasiswa\KuliahMahasiswaController::class, 'index'])->name('kuliahMahasiswa.index');
+    Route::get('nilaiTransfer', function () { return view('nilaiTransfer.index'); })->name('nilaiTransfer.index');
+    Route::get('pengajuanJudul', function () { return view('pengajuanJudul.index'); })->name('pengajuanJudul.index');
+
+    // Arsip Nilai
+    Route::get('arsip-nilai', [App\Http\Controllers\Mahasiswa\ArsipNilaiController::class, 'index'])->name('arsip-nilai.index');
+    Route::get('arsip-nilai/{khs}', [App\Http\Controllers\Mahasiswa\ArsipNilaiController::class, 'show'])->name('arsip-nilai.show');
+    Route::get('arsip-nilai/{khs}/export-pdf', [App\Http\Controllers\Mahasiswa\ArsipNilaiController::class, 'exportPdf'])->name('arsip-nilai.export');
+
+    // Notifikasi
+    Route::get('notifikasi', [App\Http\Controllers\Mahasiswa\NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('notifikasi/read-all', [App\Http\Controllers\Mahasiswa\NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.readAll');
+    Route::get('notifikasi/{id}/read', [App\Http\Controllers\Mahasiswa\NotifikasiController::class, 'read'])->name('notifikasi.read');
 });
 
+// Dosen Routes
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/dosen/dashboard', function () {
         return view('dashboard');
     })->name('dosen.dashboard');
 });
-
-
-
-
-
-
-
-
-
-// jadwal
-Route::get('/jadwal', function () {
-    return view('jadwal.index');
-})->name('jadwal.index');
-
-// KRS
-Route::get('KRS', function () {
-    return view('KRS.index');
-})->name('KRS.index');
-
-//Keberhasilan Studi
-Route::get('keberhasilanStudi', function () {
-    return view(('keberhasilanStudi.index'));
-})->name('keberhasilanStudi.index');
-
-// Konsultasi Nilai
-Route::get('konsultasiNilai', function () {
-    return view(('konsultasiNilai.index'));
-})->name('konsultasiNilai.index');
-
-// Kehadiran
-Route::get('kehadiran', function () {
-    return view(('kehadiran.index'));
-})->name('kehadiran.index');
-
-// profil Mahaiswa
-Route::get('profilMahasiswa', function () {
-    return view(('profilMahasiswa.index'));
-})->name('profilMahasiswa.index');
-
-// Kuliah Mahasiswa
-Route::get('kuliahMahasiswa', function () {
-    return view(('kuliahMahasiswa.index'));
-})->name('kuliahMahasiswa.index');
-
-// transfer Nilai
-Route::get('nilaiTransfer', function () {
-    return view(('nilaiTransfer.index'));
-})->name('nilaiTransfer.index');
-
-// 2023/2024 Ganjil
-Route::get('2023-2024Ganjil', function () {
-    return view(('2023-2024Ganjil.index'));
-})->name('2023-2024Ganjil.index');
-
-// 2023/2024 Genap
-Route::get('2023-2024Genap', function () {
-    return view(('2023-2024Genap.index'));
-})->name('2023-2024Genap.index');
-
-// 2024/2025 Ganjil
-Route::get('2024-2025Ganjil', function () {
-    return view(('2024-2025Ganjil.index'));
-})->name('2024-2025Ganjil.index');
-
-// 2024/2025 Genap
-Route::get('2024-2025Genap', function () {
-    return view(('2024-2025Genap.index'));
-})->name('2024-2025Genap.index');
-
-// Pengajuan Judul
-Route::get('pengajuanJudul', function (){
-    return view(('pengajuanJudul.index'));
-})->name('pengajuanJudul.index');
-
