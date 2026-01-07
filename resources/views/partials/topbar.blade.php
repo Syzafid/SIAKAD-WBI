@@ -18,7 +18,7 @@
 
     @php
         $user = Auth::user();
-        $mahasiswa = $user ? \App\Models\Mahasiswa::where('user_id', $user->id)->first() : null;
+        $mahasiswa = \App\Models\Mahasiswa::where('user_id', $user->id)->first();
         $notifications = $user ? \App\Models\Notifikasi::where('user_id', $user->id)->orderBy('created_at', 'desc')->get() : collect();
         $unreadNotifications = $notifications->where('is_read', false);
         $unreadCount = $unreadNotifications->count();
@@ -47,6 +47,25 @@
         } elseif (request()->routeIs('notifikasi.*')) {
             $title = 'Riwayat Notifikasi';
         }
+    @endphp
+
+    @php
+        $user = Auth::user();
+        $dosen = \App\Models\Dosen::where('user_id', $user->id)->first();
+        $notifications = $user ? \App\Models\Notifikasi::where('user_id', $user->id)->orderBy('created_at', 'desc')->get() : collect();
+        $unreadNotifications = $notifications->where('is_read', false);
+        $unreadCount = $unreadNotifications->count();
+
+       $title = 'Dashboard Dosen';
+    if (request()->routeIs('dosen.jadwal')) {
+        $title = 'Jadwal Mengajar';
+    } elseif (request()->routeIs('dosen.KRSMahasiswa')) {
+        $title = 'Validasi KRS Mahasiswa';
+    } elseif (request()->routeIs('dosen.penilaian')) {
+        $title = 'Penilaian Mata Kuliah';
+    } elseif (request()->routeIs('dosen.profilDosen')) {
+        $title = 'Bimbingan Tugas Akhir';
+    }
     @endphp
 
     <nav class="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/80 backdrop-blur-xl">

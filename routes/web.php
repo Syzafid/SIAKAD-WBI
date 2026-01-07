@@ -62,6 +62,31 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
 // Dosen Routes
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/dosen/dashboard', function () {
-        return view('dashboard');
+        return view('dosen.dashboard');
     })->name('dosen.dashboard');
+
+    //profil
+    Route::get('/dosen/profil', function () {
+        return view('dosen.profil');
+    })->name('dosen.profil');
+
+    //jadwal
+    Route::get('/dosen/jadwal', function () {
+        return view('dosen.jadwal');
+    })->name('dosen.jadwal');
+
+    //KRS Mahasiswa
+    Route::get('/dosen/KRSMahasiswa', function () {
+        return view('dosen.KRSMahasiswa');
+    })->name('dosen.KRSMahasiswa');
+
+    //Penilaian Mata Kuliah
+    Route::get('/dosen/penilaian', function () {
+        return view('dosen.penilaian');
+    })->name('dosen.penilaian');
+
+    //Profil Dosen
+    Route::get('/dosen/profilDosen', function () {
+        return view('dosen.profilDosen');
+    })->name('dosen.profilDosen');
 });

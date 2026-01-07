@@ -11,9 +11,14 @@
 </head>
 
 <body class="bg-gray-100">
-
+@if(Auth::user()->role === 'mahasiswa')
     @include('partials.topbar')
     @include('partials.navbar')
+@elseif(Auth::user()->role === 'dosen')
+    @include('partials.topbar')
+    @include('partials.navbarDosen')
+@endif
+
 
 <main class="pt-[43px] lg:ml-64 px-6 py-6 min-h-screen transition-all">
     @yield('content')
